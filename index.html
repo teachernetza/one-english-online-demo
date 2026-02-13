@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Practice Lab | One English</title>
+    
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w128">
+    <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w512">
+    <meta name="theme-color" content="#2C4A84">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --oe-navy: #2C4A84;
+            --oe-cyan: #2AA6C4;
+            --oe-sky: #3BB6D6;
+            --bg-body: #F1F5F9;
+            --bg-card: #FFFFFF;
+            --text-main: #1E293B;
+            --success: #10B981;
+            --error: #EF4444;
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: var(--text-main); padding-bottom: 50px; }
+
+        /* --- PANTALLA DE BIENVENIDA --- */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-card); z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 2rem; text-align: center;
+        }
+        .logo-big { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; object-fit: cover; box-shadow: 0 10px 30px rgba(44,74,132,0.2); }
+        .input-name {
+            width: 100%; max-width: 300px; padding: 15px; font-size: 1.1rem;
+            border: 2px solid #E2E8F0; border-radius: 12px; margin-bottom: 15px;
+            text-align: center; font-weight: 600; color: var(--oe-navy);
+        }
+        .btn-start {
+            background: linear-gradient(135deg, var(--oe-navy), var(--oe-cyan));
+            color: white; padding: 15px 40px; border-radius: 50px; border: none;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(44,74,132,0.3); transition: transform 0.2s;
+        }
+        .btn-start:active { transform: scale(0.95); }
+
+        /* --- APP UI --- */
+        #app-container { display: none; max-width: 800px; margin: 0 auto; }
+        
+        .header {
+            background: var(--bg-card); padding: 15px 20px; position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .user-badge { font-size: 0.9rem; font-weight: 600; color: var(--oe-navy); display: flex; align-items: center; gap: 8px; }
+        
+        /* TABS */
+        .tabs { display: flex; gap: 10px; padding: 15px 20px; background: var(--bg-body); overflow-x: auto; }
+        .tab-btn {
+            flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 700;
+            background: #E2E8F0; color: #64748B; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--oe-navy); color: white; box-shadow: 0 5px 15px rgba(44,74,132,0.2); }
+        .tab-btn.locked { opacity: 0.5; cursor: not-allowed; background: #CBD5E1; }
+
+        /* EJERCICIOS */
+        .practice-area { padding: 0 20px; animation: slideUp 0.5s ease; display: none; }
+        .practice-area.active { display: block; }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+        .question-card {
+            background: var(--bg-card); padding: 20px; border-radius: var(--radius);
+            margin-bottom: 15px; border-left: 5px solid var(--oe-cyan);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .q-text { font-weight: 600; margin-bottom: 10px; font-size: 1rem; color: var(--text-main); }
+        
+        /* Inputs & Selects */
+        select, input[type="text"] {
+            width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #E2E8F0;
+            font-family: 'Poppins'; font-size: 1rem; background: #F8FAFC;
+        }
+        select:focus, input:focus { border-color: var(--oe-sky); background: white; }
+        
+        .correct { border-color: var(--success) !important; background: #ECFDF5 !important; color: var(--success); }
+        .wrong { border-color: var(--error) !important; background: #FEF2F2 !important; color: var(--error); }
+
+        /* TIMER (Floating) */
+        #timer-float {
+            position: fixed; bottom: 20px; right: 20px; background: var(--oe-navy);
+            color: white; padding: 10px 20px; border-radius: 30px; font-weight: 800;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 200; display: none;
+            align-items: center; gap: 10px; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(44, 74, 132, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(44, 74, 132, 0);} 100% {box-shadow: 0 0 0 0 rgba(44, 74, 132, 0);} }
+
+        /* MODAL RESULTADOS */
+        #result-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-card {
+            background: white; width: 100%; max-width: 400px; padding: 30px;
+            border-radius: 24px; text-align: center; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from {transform: scale(0.5); opacity:0;} to {transform: scale(1); opacity:1;} }
+        
+        .score-circle {
+            width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--oe-cyan);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+            font-size: 2.5rem; font-weight: 900; color: var(--oe-navy);
+        }
+        
+        .btn-action {
+            width: 100%; padding: 15px; margin-top: 15px; border-radius: 12px; border: none;
+            background: var(--oe-navy); color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <img src="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w200" class="logo-big" alt="Logo">
+        <h1 style="margin-bottom:10px; color:var(--oe-navy);">One English Practice</h1>
+        <p style="margin-bottom:30px; color:#64748B;">Verb To Be + There Is/Are</p>
+        
+        <input type="text" id="student-name" class="input-name" placeholder="Escribe tu nombre aquí..." autocomplete="off">
+        <button class="btn-start" onclick="startApp()">COMENZAR PRÁCTICA</button>
+        <p id="name-error" style="color:red; margin-top:10px; display:none; font-size:0.9rem;">¡Necesitamos tu nombre, teacher!</p>
+    </div>
+
+    <div id="app-container">
+        
+        <header class="header">
+            <div style="font-weight:800; color:var(--oe-navy); font-size:1.2rem;">Practice <span style="color:var(--oe-cyan);">Lab</span></div>
+            <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="display-name">Guest</span></div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="btn-tab1" onclick="switchTab(1)">
+                <i class="fas fa-clipboard-list"></i> Worksheet
+            </button>
+            <button class="tab-btn locked" id="btn-tab2" onclick="switchTab(2)">
+                <i class="fas fa-pen-fancy"></i> Written Practice <i class="fas fa-lock" style="font-size:0.8rem;"></i>
+            </button>
+        </div>
+
+        <div id="tab1" class="practice-area active">
+            <div class="question-card" style="background:#ECFDF5; border-color:#10B981;">
+                <h3 style="color:#065F46;">Parte 1: Calentamiento</h3>
+                <p>Selecciona la respuesta correcta. Necesitas 80% para desbloquear la siguiente fase.</p>
+            </div>
+
+            <form id="form-worksheet">
+                <div class="question-card"><div class="q-text">1. She _____ my best friend.</div>
+                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="are">are</option></select></div>
+                <div class="question-card"><div class="q-text">2. I _____ 25 years old.</div>
+                    <select class="ws-input" data-ans="am"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="has">has</option></select></div>
+                <div class="question-card"><div class="q-text">3. They _____ at the cinema.</div>
+                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option><option value="be">be</option></select></div>
+                <div class="question-card"><div class="q-text">4. _____ you happy today?</div>
+                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="Is">Is</option><option value="Are">Are</option><option value="Am">Am</option></select></div>
+                <div class="question-card"><div class="q-text">5. It _____ a beautiful dog.</div>
+                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="are">are</option><option value="is">is</option><option value="am">am</option></select></div>
+                <div class="question-card"><div class="q-text">6. We _____ not hungry.</div>
+                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option><option value="am">am</option></select></div>
+                <div class="question-card"><div class="q-text">7. The cat _____ under the table.</div>
+                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="is">is</option><option value="are">are</option></select></div>
+                <div class="question-card"><div class="q-text">8. My parents _____ teachers.</div>
+                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option></select></div>
+                <div class="question-card"><div class="q-text">9. _____ he your brother?</div>
+                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="Is">Is</option><option value="Are">Are</option></select></div>
+                <div class="question-card"><div class="q-text">10. I _____ (not) sad.</div>
+                    <select class="ws-input" data-ans="am"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="don't">don't</option></select></div>
+
+                <div class="question-card"><div class="q-text">11. _____ a book on the desk.</div>
+                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="there is">There is</option><option value="there are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">12. _____ many people here.</div>
+                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="there is">There is</option><option value="there are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">13. _____ any milk in the fridge?</div>
+                    <select class="ws-input" data-ans="is there"><option value="">Select...</option><option value="Is there">Is there</option><option value="Are there">Are there</option></select></div>
+                <div class="question-card"><div class="q-text">14. _____ two cars in the garage.</div>
+                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">15. _____ a spider in my room!</div>
+                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">16. _____ 5 students in the class.</div>
+                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">17. No, _____ not any money.</div>
+                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="there is">there is</option><option value="there are">there are</option></select></div>
+                <div class="question-card"><div class="q-text">18. _____ a problem with my phone.</div>
+                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
+                <div class="question-card"><div class="q-text">19. How many chairs _____?</div>
+                    <select class="ws-input" data-ans="are there"><option value="">Select...</option><option value="is there">is there</option><option value="are there">are there</option></select></div>
+                <div class="question-card"><div class="q-text">20. _____ only one option.</div>
+                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
+
+                <button type="button" class="btn-action" onclick="checkWorksheet()">REVISAR Y DESBLOQUEAR</button>
+            </form>
+        </div>
+
+        <div id="tab2" class="practice-area">
+            <div class="question-card" style="background:#FFFBEB; border-color:#F59E0B;">
+                <h3 style="color:#92400E;">Parte 2: Reto Escrito</h3>
+                <p>Escribe la respuesta correcta. Cuida tu ortografía. Tienes 40 minutos.</p>
+            </div>
+
+            <form id="form-written">
+                <div id="written-questions-container">
+                    </div>
+                
+                <button type="button" class="btn-action" onclick="checkWritten()">TERMINAR EXAMEN FINAL</button>
+            </form>
+        </div>
+
+        <div id="timer-float">
+            <i class="fas fa-stopwatch"></i> <span id="time-display">40:00</span>
+        </div>
+
+    </div>
+
+    <div id="result-modal">
+        <div class="modal-card">
+            <div id="modal-icon"></div>
+            <h2 id="modal-title" style="margin-bottom:10px;">¡Felicidades!</h2>
+            <p id="modal-msg" style="color:#64748B; margin-bottom:20px;">Mensaje aquí...</p>
+            <div class="score-circle" id="modal-score">100%</div>
+            <button class="btn-action" id="modal-btn" onclick="closeModal()">Continuar</button>
+        </div>
+    </div>
+
+    <footer style="text-align:center; padding:30px; color:#94A3B8; font-size:0.8rem;">
+        &copy; 2026 One English Academy. All rights reserved.
+    </footer>
+
+    <script>
+        // --- 1. CONFIGURACIÓN & ESTADO ---
+        let studentName = "";
+        let isTab2Locked = true;
+        let timerInterval;
+        let timeLeft = 40 * 60; // 40 minutos en segundos
+
+        // Datos de las 30 preguntas escritas (Para generarlas rápido)
+        const writtenQuestions = [
+            {q: "I _____ (not) a doctor.", a: "am not"},
+            {q: "_____ (She) your sister?", a: "is she"},
+            {q: "They _____ (not) at home.", a: "are not"},
+            {q: "_____ (There is) a book here.", a: "there is"},
+            {q: "_____ (There are) two dogs.", a: "there are"},
+            {q: "We _____ happy today.", a: "are"},
+            {q: "It _____ cold outside.", a: "is"},
+            {q: "_____ (not) you tired?", a: "are not"}, /* o Aren't */
+            {q: "John _____ my brother.", a: "is"},
+            {q: "I _____ 20 years old.", a: "am"},
+            {q: "_____ (There) any water?", a: "is there"},
+            {q: "There _____ (not) any chairs.", a: "are not"},
+            {q: "Where _____ (be) you from?", a: "are"},
+            {q: "What _____ (be) your name?", a: "is"},
+            {q: "Who _____ (be) that man?", a: "is"},
+            {q: "_____ (be) they students?", a: "are"},
+            {q: "The car _____ (be) red.", a: "is"},
+            {q: "My eyes _____ (be) blue.", a: "are"},
+            {q: "There _____ (be) a problem.", a: "is"},
+            {q: "There _____ (be) five cats.", a: "are"},
+            {q: "I _____ (be) not hungry.", a: "am"},
+            {q: "She _____ (not) English.", a: "is not"},
+            {q: "We _____ (be) friends.", a: "are"},
+            {q: "The sun _____ (be) hot.", a: "is"},
+            {q: "_____ (be) it raining?", a: "is"},
+            {q: "There _____ (not) a bathroom.", a: "is not"},
+            {q: "Why _____ (be) you sad?", a: "are"},
+            {q: "When _____ (be) the party?", a: "is"},
+            {q: "_____ (be) I late?", a: "am"},
+            {q: "The dogs _____ (be) running.", a: "are"}
+        ];
+
+        // --- 2. INICIO & NAVEGACIÓN ---
+        function startApp() {
+            const input = document.getElementById('student-name');
+            const name = input.value.trim();
+            
+            if(name.length < 2) {
+                document.getElementById('name-error').style.display = 'block';
+                return;
+            }
+
+            studentName = name;
+            document.getElementById('display-name').innerText = studentName;
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+
+            // Generar preguntas escritas al inicio
+            renderWrittenQuestions();
+        }
+
+        function switchTab(tabId) {
+            if(tabId === 2 && isTab2Locked) {
+                alert("🔒 ¡Alto ahí, " + studentName + "! Primero debes terminar el Worksheet con éxito.");
+                return;
+            }
+
+            // UI Changes
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-tab' + tabId).classList.add('active');
+            
+            document.querySelectorAll('.practice-area').forEach(a => a.classList.remove('active'));
+            document.getElementById('tab' + tabId).classList.add('active');
+
+            if(tabId === 2) {
+                document.getElementById('timer-float').style.display = 'flex';
+                startTimer();
+            } else {
+                document.getElementById('timer-float').style.display = 'none';
+            }
+            window.scrollTo(0,0);
+        }
+
+        // --- 3. LÓGICA DE WORKSHEET ---
+        function checkWorksheet() {
+            const inputs = document.querySelectorAll('.ws-input');
+            let score = 0;
+            let total = inputs.length; // 20
+
+            inputs.forEach(input => {
+                const userAns = input.value;
+                const correctAns = input.getAttribute('data-ans');
+                
+                if(userAns === correctAns) {
+                    score++;
+                    input.className = 'ws-input correct';
+                } else {
+                    input.className = 'ws-input wrong';
+                }
+            });
+
+            // Lógica de desbloqueo (mínimo 16/20 = 80%)
+            if(score >= 16) {
+                showModal(true, score, total, "¡Excelente trabajo, " + studentName + "!", "Has desbloqueado el Nivel Difícil. ¡Prepárate para escribir!");
+                isTab2Locked = false;
+                const btn2 = document.getElementById('btn-tab2');
+                btn2.classList.remove('locked');
+                btn2.innerHTML = '<i class="fas fa-pen-fancy"></i> Written Practice';
+                document.getElementById('modal-btn').onclick = function() {
+                    closeModal();
+                    switchTab(2);
+                };
+            } else {
+                showModal(false, score, total, "Sigue practicando, " + studentName, "Necesitas al menos 16 aciertos para desbloquear el siguiente nivel.");
+            }
+        }
+
+        // --- 4. LÓGICA DE WRITTEN PRACTICE ---
+        function renderWrittenQuestions() {
+            const container = document.getElementById('written-questions-container');
+            let html = '';
+            writtenQuestions.forEach((item, index) => {
+                html += `
+                <div class="question-card">
+                    <div class="q-text">${index + 1}. ${item.q}</div>
+                    <input type="text" class="wr-input" data-ans="${item.a}" placeholder="Escribe tu respuesta...">
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function startTimer() {
+            if(timerInterval) return; // Ya está corriendo
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                document.getElementById('time-display').innerText = 
+                    `${m}:${s < 10 ? '0' : ''}${s}`;
+
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏰ ¡Tiempo terminado, " + studentName + "! Se enviarán tus respuestas.");
+                    checkWritten();
+                }
+            }, 1000);
+        }
+
+        function checkWritten() {
+            clearInterval(timerInterval); // Detener reloj
+            const inputs = document.querySelectorAll('.wr-input');
+            let score = 0;
+            let total = inputs.length;
+
+            inputs.forEach(input => {
+                // Normalizar: Minúsculas y quitar espacios extra
+                let val = input.value.toLowerCase().trim();
+                let ans = input.getAttribute('data-ans').toLowerCase();
+                
+                // Aceptamos contracciones si la respuesta es "is not" -> "isn't" (simplificado para este demo)
+                if(val === ans || (ans === "is not" && val === "isn't") || (ans === "are not" && val === "aren't") || (ans === "am not" && val === "i'm not")) {
+                    score++;
+                    input.className = 'wr-input correct';
+                } else {
+                    input.className = 'wr-input wrong';
+                    // Mostrar respuesta correcta en placeholder si falló
+                    input.value += ` ❌ (Correct: ${ans})`;
+                }
+            });
+
+            // Mensaje final
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            showModal(true, score, total, "¡Curso Completado!", "¡Felicidades " + studentName + "! Has terminado todo el entrenamiento.");
+            document.getElementById('modal-btn').onclick = function() { location.reload(); };
+        }
+
+        // --- 5. UTILIDADES MODAL ---
+        function showModal(isSuccess, score, total, title, msg) {
+            const modal = document.getElementById('result-modal');
+            const scoreTxt = document.getElementById('modal-score');
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+            scoreTxt.innerText = `${score}/${total}`;
+            scoreTxt.style.borderColor = isSuccess ? '#10B981' : '#EF4444';
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+        }
+
+    </script>
+</body>
+</html>
