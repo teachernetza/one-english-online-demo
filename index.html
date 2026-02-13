@@ -2,125 +2,233 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Practice Lab | One English</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Intensive Practice | One English</title>
     
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w128">
     <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w512">
     <meta name="theme-color" content="#2C4A84">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Lora:ital,wght@1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+        /* ==========================================================================
+           1. CORE DESIGN SYSTEM 
+           ========================================================================== */
         :root {
             --oe-navy: #2C4A84;
+            --oe-royal: #2F4F8F;
             --oe-cyan: #2AA6C4;
             --oe-sky: #3BB6D6;
-            --bg-body: #F1F5F9;
+            
+            --bg-body: #F4F7F9;
             --bg-card: #FFFFFF;
+            
             --text-main: #1E293B;
+            --text-muted: #64748B;
+            
             --success: #10B981;
+            --success-bg: #ECFDF5;
             --error: #EF4444;
-            --radius: 16px;
+            --error-bg: #FEF2F2;
+            --warning: #F59E0B;
+            --warning-bg: #FFFBEB;
+            
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px -5px rgba(44, 74, 132, 0.15);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: var(--text-main); padding-bottom: 50px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            padding-bottom: 80px; 
+            overflow-x: hidden;
+        }
 
-        /* --- PANTALLA DE BIENVENIDA --- */
+        /* Evitar zoom en iOS al tocar inputs */
+        input[type="text"] { font-size: 16px; }
+
+        /* ==========================================================================
+           2. PANTALLA DE BIENVENIDA (GATEWAY)
+           ========================================================================== */
         #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-card); z-index: 9999;
+            position: fixed; inset: 0; background: var(--bg-card); z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 2rem; text-align: center;
         }
-        .logo-big { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; object-fit: cover; box-shadow: 0 10px 30px rgba(44,74,132,0.2); }
-        .input-name {
-            width: 100%; max-width: 300px; padding: 15px; font-size: 1.1rem;
-            border: 2px solid #E2E8F0; border-radius: 12px; margin-bottom: 15px;
-            text-align: center; font-weight: 600; color: var(--oe-navy);
+        
+        .logo-box {
+            width: 120px; height: 120px; border-radius: 24px; margin-bottom: 2rem;
+            box-shadow: var(--shadow-md); overflow: hidden;
         }
+        .logo-box img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .welcome-title { font-family: 'Lora', serif; font-size: 2rem; color: var(--oe-navy); margin-bottom: 0.5rem; }
+        .welcome-sub { color: var(--text-muted); margin-bottom: 2.5rem; font-weight: 500; }
+        
+        .name-input-group { position: relative; width: 100%; max-width: 320px; margin-bottom: 2rem; }
+        .name-input {
+            width: 100%; padding: 18px 20px; border-radius: var(--radius-md);
+            border: 2px solid #E2E8F0; background: #F8FAFC; text-align: center;
+            font-family: 'Poppins'; font-size: 1.1rem; font-weight: 700; color: var(--oe-navy);
+            transition: 0.3s;
+        }
+        .name-input:focus { border-color: var(--oe-cyan); background: white; outline: none; box-shadow: 0 0 0 4px rgba(42, 166, 196, 0.1); }
+        .name-input::placeholder { color: #94A3B8; font-weight: 400; }
+        
         .btn-start {
             background: linear-gradient(135deg, var(--oe-navy), var(--oe-cyan));
-            color: white; padding: 15px 40px; border-radius: 50px; border: none;
-            font-size: 1.1rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 10px 20px rgba(44,74,132,0.3); transition: transform 0.2s;
+            color: white; padding: 18px 40px; border-radius: 50px; border: none;
+            font-size: 1.1rem; font-weight: 800; cursor: pointer; letter-spacing: 1px;
+            box-shadow: 0 10px 20px rgba(44,74,132,0.25); transition: 0.2s; width: 100%; max-width: 320px;
         }
-        .btn-start:active { transform: scale(0.95); }
+        .btn-start:active { transform: scale(0.96); box-shadow: 0 5px 10px rgba(44,74,132,0.2); }
 
-        /* --- APP UI --- */
-        #app-container { display: none; max-width: 800px; margin: 0 auto; }
+        /* ==========================================================================
+           3. APP SHELL & NAVIGATION
+           ========================================================================== */
+        #app-root { display: none; max-width: 800px; margin: 0 auto; animation: fadeIn 0.6s ease; }
+        @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
         
-        .header {
+        .top-nav {
             background: var(--bg-card); padding: 15px 20px; position: sticky; top: 0; z-index: 100;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm); border-bottom: 1px solid #E2E8F0;
         }
-        .user-badge { font-size: 0.9rem; font-weight: 600; color: var(--oe-navy); display: flex; align-items: center; gap: 8px; }
+        .app-branding { font-weight: 800; font-size: 1.2rem; color: var(--oe-navy); display: flex; align-items: center; gap: 8px; }
+        .student-badge {
+            background: #F1F5F9; padding: 6px 12px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 700; color: var(--oe-cyan);
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        /* --- TABS --- */
+        .tab-container { display: flex; gap: 10px; padding: 20px; background: var(--bg-body); overflow-x: auto; }
+        .tab {
+            flex: 1; min-width: 150px; padding: 14px; border-radius: var(--radius-md);
+            border: none; background: #E2E8F0; color: var(--text-muted);
+            font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .tab.active { background: var(--oe-navy); color: white; box-shadow: var(--shadow-md); }
+        .tab.locked { opacity: 0.6; cursor: not-allowed; background: #CBD5E1; border: 1px dashed #94A3B8; }
+
+        /* ==========================================================================
+           4. PRACTICE AREAS & QUESTIONS
+           ========================================================================== */
+        .module-view { display: none; padding: 0 20px; animation: slideUp 0.4s ease; }
+        .module-view.active { display: block; }
+        @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
+
+        .instructions-card {
+            background: var(--bg-card); padding: 1.5rem; border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem; border-left: 5px solid; box-shadow: var(--shadow-sm);
+        }
         
-        /* TABS */
-        .tabs { display: flex; gap: 10px; padding: 15px 20px; background: var(--bg-body); overflow-x: auto; }
-        .tab-btn {
-            flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 700;
-            background: #E2E8F0; color: #64748B; cursor: pointer; transition: 0.3s;
-            display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
-        }
-        .tab-btn.active { background: var(--oe-navy); color: white; box-shadow: 0 5px 15px rgba(44,74,132,0.2); }
-        .tab-btn.locked { opacity: 0.5; cursor: not-allowed; background: #CBD5E1; }
-
-        /* EJERCICIOS */
-        .practice-area { padding: 0 20px; animation: slideUp 0.5s ease; display: none; }
-        .practice-area.active { display: block; }
-        @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-
-        .question-card {
-            background: var(--bg-card); padding: 20px; border-radius: var(--radius);
-            margin-bottom: 15px; border-left: 5px solid var(--oe-cyan);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-        .q-text { font-weight: 600; margin-bottom: 10px; font-size: 1rem; color: var(--text-main); }
+        .q-list { display: flex; flex-direction: column; gap: 15px; }
         
-        /* Inputs & Selects */
-        select, input[type="text"] {
-            width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #E2E8F0;
-            font-family: 'Poppins'; font-size: 1rem; background: #F8FAFC;
+        .q-card {
+            background: var(--bg-card); padding: 18px; border-radius: var(--radius-md);
+            border: 1px solid #E2E8F0; display: flex; flex-direction: column; gap: 12px;
+            transition: 0.3s;
         }
-        select:focus, input:focus { border-color: var(--oe-sky); background: white; }
+        .q-card:focus-within { border-color: var(--oe-cyan); box-shadow: 0 4px 15px rgba(42,166,196,0.1); }
         
-        .correct { border-color: var(--success) !important; background: #ECFDF5 !important; color: var(--success); }
-        .wrong { border-color: var(--error) !important; background: #FEF2F2 !important; color: var(--error); }
-
-        /* TIMER (Floating) */
-        #timer-float {
-            position: fixed; bottom: 20px; right: 20px; background: var(--oe-navy);
-            color: white; padding: 10px 20px; border-radius: 30px; font-weight: 800;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2); z-index: 200; display: none;
-            align-items: center; gap: 10px; animation: pulse 2s infinite;
+        .q-text { font-weight: 600; font-size: 1.05rem; color: var(--text-main); }
+        
+        .input-box { position: relative; }
+        .q-input {
+            width: 100%; padding: 14px; border-radius: 8px; border: 2px solid #CBD5E1;
+            background: #F8FAFC; font-family: 'Poppins'; font-size: 1rem; font-weight: 600;
+            color: var(--oe-navy); transition: 0.3s;
         }
-        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(44, 74, 132, 0.4);} 70% {box-shadow: 0 0 0 10px rgba(44, 74, 132, 0);} 100% {box-shadow: 0 0 0 0 rgba(44, 74, 132, 0);} }
+        .q-input:focus { border-color: var(--oe-cyan); background: white; outline: none; }
+        .q-input::placeholder { color: #CBD5E1; font-weight: 400; }
+        
+        /* Validation States */
+        .q-input.correct {
+            border-color: var(--success); background: var(--success-bg); color: #065F46;
+            pointer-events: none; /* Bloquea el input si está bien */
+        }
+        .q-input.wrong {
+            border-color: var(--error); background: var(--error-bg); color: #991B1B;
+        }
+        
+        .feedback-icon {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            font-size: 1.2rem; display: none;
+        }
+        .correct + .feedback-icon { display: block; color: var(--success); content: "\f058"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
+        .wrong + .feedback-icon { display: block; color: var(--error); content: "\f057"; font-family: "Font Awesome 6 Free"; font-weight: 900; }
 
-        /* MODAL RESULTADOS */
-        #result-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000;
+        .shake { animation: shakeError 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shakeError { 10%, 90% {transform: translate3d(-2px, 0, 0);} 20%, 80% {transform: translate3d(3px, 0, 0);} 30%, 50%, 70% {transform: translate3d(-5px, 0, 0);} 40%, 60% {transform: translate3d(5px, 0, 0);} }
+
+        /* Botón de Chequeo Flotante Relativo */
+        .btn-check {
+            width: 100%; padding: 18px; border-radius: var(--radius-md); border: none;
+            background: var(--oe-navy); color: white; font-weight: 800; font-size: 1.1rem;
+            margin: 30px 0; cursor: pointer; box-shadow: var(--shadow-md); transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-check:hover { background: var(--oe-royal); transform: translateY(-2px); }
+        .btn-check:active { transform: translateY(0); }
+
+        /* ==========================================================================
+           5. TIMER & NOTIFICATIONS (TOASTS)
+           ========================================================================== */
+        #timer-widget {
+            position: fixed; bottom: 20px; right: 20px; background: var(--error);
+            color: white; padding: 12px 25px; border-radius: 30px; font-weight: 800; font-size: 1.2rem;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4); z-index: 500; display: none;
+            align-items: center; gap: 10px; border: 2px solid white;
+        }
+
+        #toast-container {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+        }
+        .toast {
+            background: var(--bg-card); color: var(--text-main); padding: 15px 25px;
+            border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            font-weight: 600; display: flex; align-items: center; gap: 12px;
+            animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), toastOut 0.3s ease 3s forwards;
+            border-left: 4px solid var(--oe-cyan);
+        }
+        @keyframes toastIn { from {opacity:0; transform:translateY(-20px) scale(0.9);} to {opacity:1; transform:translateY(0) scale(1);} }
+        @keyframes toastOut { to {opacity:0; transform:translateY(-20px) scale(0.9);} }
+
+        /* ==========================================================================
+           6. MODAL (RESULTADOS GLOBALES)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 5000;
             display: none; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(5px);
         }
-        .modal-card {
-            background: white; width: 100%; max-width: 400px; padding: 30px;
-            border-radius: 24px; text-align: center; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .modal-content {
+            background: var(--bg-card); width: 100%; max-width: 420px; padding: 2.5rem 2rem;
+            border-radius: 24px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        @keyframes popIn { from {transform: scale(0.5); opacity:0;} to {transform: scale(1); opacity:1;} }
+        @keyframes modalPop { from {transform:scale(0.8); opacity:0;} to {transform:scale(1); opacity:1;} }
         
-        .score-circle {
-            width: 120px; height: 120px; border-radius: 50%; border: 8px solid var(--oe-cyan);
-            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
-            font-size: 2.5rem; font-weight: 900; color: var(--oe-navy);
-        }
+        .modal-icon { font-size: 3.5rem; margin-bottom: 15px; }
+        .modal-title { font-family: 'Lora'; font-size: 1.8rem; color: var(--oe-navy); margin-bottom: 10px; }
+        .modal-body { color: var(--text-muted); margin-bottom: 25px; font-size: 1rem; line-height: 1.6; }
         
-        .btn-action {
-            width: 100%; padding: 15px; margin-top: 15px; border-radius: 12px; border: none;
-            background: var(--oe-navy); color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
+        .btn-modal {
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            background: var(--oe-cyan); color: white; font-weight: 800; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s;
         }
 
     </style>
@@ -128,309 +236,381 @@
 <body>
 
     <div id="welcome-screen">
-        <img src="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w200" class="logo-big" alt="Logo">
-        <h1 style="margin-bottom:10px; color:var(--oe-navy);">One English Practice</h1>
-        <p style="margin-bottom:30px; color:#64748B;">Verb To Be + There Is/Are</p>
+        <div class="logo-box">
+            <img src="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w200" alt="One English Logo">
+        </div>
+        <h1 class="welcome-title">Practice Suite</h1>
+        <p class="welcome-sub">The Verb To Be & There is/are</p>
         
-        <input type="text" id="student-name" class="input-name" placeholder="Escribe tu nombre aquí..." autocomplete="off">
-        <button class="btn-start" onclick="startApp()">COMENZAR PRÁCTICA</button>
-        <p id="name-error" style="color:red; margin-top:10px; display:none; font-size:0.9rem;">¡Necesitamos tu nombre, teacher!</p>
+        <div class="name-input-group">
+            <input type="text" id="student-name" class="name-input" placeholder="Tu nombre..." autocomplete="off">
+        </div>
+        
+        <button class="btn-start" onclick="initApp()">ENTRAR AL LABORATORIO</button>
     </div>
 
-    <div id="app-container">
+    <div id="toast-container"></div>
+
+    <div id="app-root">
         
-        <header class="header">
-            <div style="font-weight:800; color:var(--oe-navy); font-size:1.2rem;">Practice <span style="color:var(--oe-cyan);">Lab</span></div>
-            <div class="user-badge"><i class="fas fa-user-circle"></i> <span id="display-name">Guest</span></div>
+        <header class="top-nav">
+            <div class="app-branding">
+                <i class="fas fa-layer-group" style="color:var(--oe-cyan);"></i> One English
+            </div>
+            <div class="student-badge">
+                <i class="fas fa-user-graduate"></i> <span id="ui-name">Estudiante</span>
+            </div>
         </header>
 
-        <div class="tabs">
-            <button class="tab-btn active" id="btn-tab1" onclick="switchTab(1)">
-                <i class="fas fa-clipboard-list"></i> Worksheet
+        <div class="tab-container">
+            <button class="tab active" id="tab-btn-1" onclick="switchTab(1)">
+                <i class="fas fa-file-alt"></i> Worksheet
             </button>
-            <button class="tab-btn locked" id="btn-tab2" onclick="switchTab(2)">
-                <i class="fas fa-pen-fancy"></i> Written Practice <i class="fas fa-lock" style="font-size:0.8rem;"></i>
+            <button class="tab locked" id="tab-btn-2" onclick="switchTab(2)">
+                <i class="fas fa-pen-nib"></i> Written Practice <i class="fas fa-lock" id="lock-icon" style="font-size:0.8rem;"></i>
             </button>
         </div>
 
-        <div id="tab1" class="practice-area active">
-            <div class="question-card" style="background:#ECFDF5; border-color:#10B981;">
-                <h3 style="color:#065F46;">Parte 1: Calentamiento</h3>
-                <p>Selecciona la respuesta correcta. Necesitas 80% para desbloquear la siguiente fase.</p>
+        <div id="module-1" class="module-view active">
+            <div class="instructions-card" style="border-color: var(--oe-cyan);">
+                <h3 style="color:var(--oe-navy); margin-bottom:8px;">Fase 1: Worksheet</h3>
+                <p style="font-size:0.9rem; color:var(--text-muted);">
+                    Escribe la respuesta correcta para completar la oración. 
+                    <strong>Regla de Oro:</strong> Debes obtener 20 de 20 para desbloquear la Fase 2. Si fallas, corrige las marcadas en rojo y vuelve a revisar.
+                </p>
             </div>
 
-            <form id="form-worksheet">
-                <div class="question-card"><div class="q-text">1. She _____ my best friend.</div>
-                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="are">are</option></select></div>
-                <div class="question-card"><div class="q-text">2. I _____ 25 years old.</div>
-                    <select class="ws-input" data-ans="am"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="has">has</option></select></div>
-                <div class="question-card"><div class="q-text">3. They _____ at the cinema.</div>
-                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option><option value="be">be</option></select></div>
-                <div class="question-card"><div class="q-text">4. _____ you happy today?</div>
-                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="Is">Is</option><option value="Are">Are</option><option value="Am">Am</option></select></div>
-                <div class="question-card"><div class="q-text">5. It _____ a beautiful dog.</div>
-                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="are">are</option><option value="is">is</option><option value="am">am</option></select></div>
-                <div class="question-card"><div class="q-text">6. We _____ not hungry.</div>
-                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option><option value="am">am</option></select></div>
-                <div class="question-card"><div class="q-text">7. The cat _____ under the table.</div>
-                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="is">is</option><option value="are">are</option></select></div>
-                <div class="question-card"><div class="q-text">8. My parents _____ teachers.</div>
-                    <select class="ws-input" data-ans="are"><option value="">Select...</option><option value="is">is</option><option value="are">are</option></select></div>
-                <div class="question-card"><div class="q-text">9. _____ he your brother?</div>
-                    <select class="ws-input" data-ans="is"><option value="">Select...</option><option value="Is">Is</option><option value="Are">Are</option></select></div>
-                <div class="question-card"><div class="q-text">10. I _____ (not) sad.</div>
-                    <select class="ws-input" data-ans="am"><option value="">Select...</option><option value="am">am</option><option value="is">is</option><option value="don't">don't</option></select></div>
+            <div class="q-list" id="ws-container">
+                </div>
 
-                <div class="question-card"><div class="q-text">11. _____ a book on the desk.</div>
-                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="there is">There is</option><option value="there are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">12. _____ many people here.</div>
-                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="there is">There is</option><option value="there are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">13. _____ any milk in the fridge?</div>
-                    <select class="ws-input" data-ans="is there"><option value="">Select...</option><option value="Is there">Is there</option><option value="Are there">Are there</option></select></div>
-                <div class="question-card"><div class="q-text">14. _____ two cars in the garage.</div>
-                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">15. _____ a spider in my room!</div>
-                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">16. _____ 5 students in the class.</div>
-                    <select class="ws-input" data-ans="there are"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">17. No, _____ not any money.</div>
-                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="there is">there is</option><option value="there are">there are</option></select></div>
-                <div class="question-card"><div class="q-text">18. _____ a problem with my phone.</div>
-                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
-                <div class="question-card"><div class="q-text">19. How many chairs _____?</div>
-                    <select class="ws-input" data-ans="are there"><option value="">Select...</option><option value="is there">is there</option><option value="are there">are there</option></select></div>
-                <div class="question-card"><div class="q-text">20. _____ only one option.</div>
-                    <select class="ws-input" data-ans="there is"><option value="">Select...</option><option value="There is">There is</option><option value="There are">There are</option></select></div>
-
-                <button type="button" class="btn-action" onclick="checkWorksheet()">REVISAR Y DESBLOQUEAR</button>
-            </form>
+            <button class="btn-check" onclick="verifyWorksheet()">
+                <i class="fas fa-check-double"></i> VERIFICAR WORKSHEET
+            </button>
         </div>
 
-        <div id="tab2" class="practice-area">
-            <div class="question-card" style="background:#FFFBEB; border-color:#F59E0B;">
-                <h3 style="color:#92400E;">Parte 2: Reto Escrito</h3>
-                <p>Escribe la respuesta correcta. Cuida tu ortografía. Tienes 40 minutos.</p>
+        <div id="module-2" class="module-view">
+            <div class="instructions-card" style="border-color: var(--warning); background: var(--warning-bg);">
+                <h3 style="color:#92400E; margin-bottom:8px;">Fase 2: Reto Escrito</h3>
+                <p style="font-size:0.9rem; color:#B45309;">
+                    Nivel Avanzado. Tienes <strong>40 minutos</strong> para completar 30 oraciones. Escribe la estructura completa donde falte. Cuida la ortografía.
+                </p>
             </div>
 
-            <form id="form-written">
-                <div id="written-questions-container">
-                    </div>
-                
-                <button type="button" class="btn-action" onclick="checkWritten()">TERMINAR EXAMEN FINAL</button>
-            </form>
+            <div class="q-list" id="wp-container">
+                </div>
+
+            <button class="btn-check" style="background:var(--warning); color:#92400E;" onclick="verifyWritten()">
+                <i class="fas fa-flag-checkered"></i> ENTREGAR EXAMEN FINAL
+            </button>
         </div>
 
-        <div id="timer-float">
+        <div id="timer-widget">
             <i class="fas fa-stopwatch"></i> <span id="time-display">40:00</span>
         </div>
 
     </div>
 
-    <div id="result-modal">
-        <div class="modal-card">
-            <div id="modal-icon"></div>
-            <h2 id="modal-title" style="margin-bottom:10px;">¡Felicidades!</h2>
-            <p id="modal-msg" style="color:#64748B; margin-bottom:20px;">Mensaje aquí...</p>
-            <div class="score-circle" id="modal-score">100%</div>
-            <button class="btn-action" id="modal-btn" onclick="closeModal()">Continuar</button>
+    <div class="modal-overlay" id="global-modal">
+        <div class="modal-content">
+            <div class="modal-icon" id="mod-icon">🏆</div>
+            <h2 class="modal-title" id="mod-title">¡Excelente!</h2>
+            <p class="modal-body" id="mod-body">Mensaje aquí</p>
+            <button class="btn-modal" id="mod-btn" onclick="closeModal()">Continuar</button>
         </div>
     </div>
 
-    <footer style="text-align:center; padding:30px; color:#94A3B8; font-size:0.8rem;">
-        &copy; 2026 One English Academy. All rights reserved.
-    </footer>
-
     <script>
-        // --- 1. CONFIGURACIÓN & ESTADO ---
+        /* ==========================================================================
+           LOGIC & DATA ENGINE
+           ========================================================================== */
+        
+        // --- ESTADO GLOBAL ---
         let studentName = "";
-        let isTab2Locked = true;
+        let tab2Unlocked = false;
+        let timerRunning = false;
+        let timeLeft = 40 * 60; // 40 minutos
         let timerInterval;
-        let timeLeft = 40 * 60; // 40 minutos en segundos
 
-        // Datos de las 30 preguntas escritas (Para generarlas rápido)
-        const writtenQuestions = [
-            {q: "I _____ (not) a doctor.", a: "am not"},
-            {q: "_____ (She) your sister?", a: "is she"},
-            {q: "They _____ (not) at home.", a: "are not"},
-            {q: "_____ (There is) a book here.", a: "there is"},
-            {q: "_____ (There are) two dogs.", a: "there are"},
-            {q: "We _____ happy today.", a: "are"},
-            {q: "It _____ cold outside.", a: "is"},
-            {q: "_____ (not) you tired?", a: "are not"}, /* o Aren't */
-            {q: "John _____ my brother.", a: "is"},
-            {q: "I _____ 20 years old.", a: "am"},
-            {q: "_____ (There) any water?", a: "is there"},
-            {q: "There _____ (not) any chairs.", a: "are not"},
-            {q: "Where _____ (be) you from?", a: "are"},
-            {q: "What _____ (be) your name?", a: "is"},
-            {q: "Who _____ (be) that man?", a: "is"},
-            {q: "_____ (be) they students?", a: "are"},
-            {q: "The car _____ (be) red.", a: "is"},
-            {q: "My eyes _____ (be) blue.", a: "are"},
-            {q: "There _____ (be) a problem.", a: "is"},
-            {q: "There _____ (be) five cats.", a: "are"},
-            {q: "I _____ (be) not hungry.", a: "am"},
-            {q: "She _____ (not) English.", a: "is not"},
-            {q: "We _____ (be) friends.", a: "are"},
-            {q: "The sun _____ (be) hot.", a: "is"},
-            {q: "_____ (be) it raining?", a: "is"},
-            {q: "There _____ (not) a bathroom.", a: "is not"},
-            {q: "Why _____ (be) you sad?", a: "are"},
-            {q: "When _____ (be) the party?", a: "is"},
-            {q: "_____ (be) I late?", a: "am"},
-            {q: "The dogs _____ (be) running.", a: "are"}
+        // --- BASE DE DATOS DE PREGUNTAS (Smart Validation) ---
+        // Aceptamos arrays de strings para validar variantes válidas (ej. is not / isn't)
+        
+        const worksheetData = [
+            { id: "w1", q: "She _____ my best friend.", a: ["is", "'s"] },
+            { id: "w2", q: "I _____ 25 years old.", a: ["am", "'m"] },
+            { id: "w3", q: "They _____ at the cinema.", a: ["are", "'re"] },
+            { id: "w4", q: "_____ you happy today?", a: ["are"] },
+            { id: "w5", q: "It _____ a beautiful dog.", a: ["is", "'s"] },
+            { id: "w6", q: "We _____ not hungry.", a: ["are", "'re"] },
+            { id: "w7", q: "The cat _____ under the table.", a: ["is"] },
+            { id: "w8", q: "My parents _____ teachers.", a: ["are"] },
+            { id: "w9", q: "_____ he your brother?", a: ["is"] },
+            { id: "w10", q: "I _____ (not) sad.", a: ["am not", "'m not"] },
+            { id: "w11", q: "_____ a book on the desk.", a: ["there is", "there's"] },
+            { id: "w12", q: "_____ many people here.", a: ["there are", "there're"] },
+            { id: "w13", q: "_____ any milk in the fridge?", a: ["is there"] },
+            { id: "w14", q: "_____ two cars in the garage.", a: ["there are", "there're"] },
+            { id: "w15", q: "_____ a spider in my room!", a: ["there is", "there's"] },
+            { id: "w16", q: "_____ 5 students in the class.", a: ["there are", "there're"] },
+            { id: "w17", q: "No, _____ not any money.", a: ["there is", "there's"] },
+            { id: "w18", q: "_____ a problem with my phone.", a: ["there is", "there's"] },
+            { id: "w19", q: "How many chairs _____?", a: ["are there"] },
+            { id: "w20", q: "_____ only one option.", a: ["there is", "there's"] }
         ];
 
-        // --- 2. INICIO & NAVEGACIÓN ---
-        function startApp() {
+        const writtenData = [
+            { id: "p1", q: "I _____ (not) a doctor.", a: ["am not", "'m not"] },
+            { id: "p2", q: "_____ (She) your sister?", a: ["is she"] },
+            { id: "p3", q: "They _____ (not) at home.", a: ["are not", "aren't", "'re not"] },
+            { id: "p4", q: "_____ (There is) a book here.", a: ["there is", "there's"] },
+            { id: "p5", q: "_____ (There are) two dogs.", a: ["there are"] },
+            { id: "p6", q: "We _____ happy today.", a: ["are", "'re"] },
+            { id: "p7", q: "It _____ cold outside.", a: ["is", "'s"] },
+            { id: "p8", q: "_____ (not) you tired?", a: ["are not", "aren't"] },
+            { id: "p9", q: "John _____ my brother.", a: ["is", "'s"] },
+            { id: "p10", q: "I _____ 20 years old.", a: ["am", "'m"] },
+            { id: "p11", q: "_____ (There) any water?", a: ["is there"] },
+            { id: "p12", q: "There _____ (not) any chairs.", a: ["are not", "aren't"] },
+            { id: "p13", q: "Where _____ (be) you from?", a: ["are"] },
+            { id: "p14", q: "What _____ (be) your name?", a: ["is", "'s"] },
+            { id: "p15", q: "Who _____ (be) that man?", a: ["is", "'s"] },
+            { id: "p16", q: "_____ (be) they students?", a: ["are"] },
+            { id: "p17", q: "The car _____ (be) red.", a: ["is"] },
+            { id: "p18", q: "My eyes _____ (be) blue.", a: ["are"] },
+            { id: "p19", q: "There _____ (be) a problem.", a: ["is", "'s"] },
+            { id: "p20", q: "There _____ (be) five cats.", a: ["are"] },
+            { id: "p21", q: "I _____ (be) not hungry.", a: ["am", "'m"] },
+            { id: "p22", q: "She _____ (not) English.", a: ["is not", "isn't", "'s not"] },
+            { id: "p23", q: "We _____ (be) friends.", a: ["are", "'re"] },
+            { id: "p24", q: "The sun _____ (be) hot.", a: ["is"] },
+            { id: "p25", q: "_____ (be) it raining?", a: ["is"] },
+            { id: "p26", q: "There _____ (not) a bathroom.", a: ["is not", "isn't"] },
+            { id: "p27", q: "Why _____ (be) you sad?", a: ["are"] },
+            { id: "p28", q: "When _____ (be) the party?", a: ["is"] },
+            { id: "p29", q: "_____ (be) I late?", a: ["am"] },
+            { id: "p30", q: "The dogs _____ (be) running.", a: ["are"] }
+        ];
+
+        // --- INIT ---
+        function initApp() {
             const input = document.getElementById('student-name');
             const name = input.value.trim();
             
             if(name.length < 2) {
-                document.getElementById('name-error').style.display = 'block';
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 400);
+                showToast("¡Ey! Necesitamos tu nombre para empezar.", "error");
                 return;
             }
 
             studentName = name;
-            document.getElementById('display-name').innerText = studentName;
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-
-            // Generar preguntas escritas al inicio
-            renderWrittenQuestions();
-        }
-
-        function switchTab(tabId) {
-            if(tabId === 2 && isTab2Locked) {
-                alert("🔒 ¡Alto ahí, " + studentName + "! Primero debes terminar el Worksheet con éxito.");
-                return;
-            }
-
-            // UI Changes
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-tab' + tabId).classList.add('active');
+            document.getElementById('ui-name').innerText = studentName;
             
-            document.querySelectorAll('.practice-area').forEach(a => a.classList.remove('active'));
-            document.getElementById('tab' + tabId).classList.add('active');
+            // Renderizar preguntas
+            renderQuestions('ws-container', worksheetData, 'ws');
+            renderQuestions('wp-container', writtenData, 'wp');
 
-            if(tabId === 2) {
-                document.getElementById('timer-float').style.display = 'flex';
-                startTimer();
-            } else {
-                document.getElementById('timer-float').style.display = 'none';
-            }
-            window.scrollTo(0,0);
+            // Transición de pantalla
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-root').style.display = 'block';
+            showToast(`¡Bienvenido al laboratorio, ${studentName}!`, "success");
         }
 
-        // --- 3. LÓGICA DE WORKSHEET ---
-        function checkWorksheet() {
-            const inputs = document.querySelectorAll('.ws-input');
-            let score = 0;
-            let total = inputs.length; // 20
-
-            inputs.forEach(input => {
-                const userAns = input.value;
-                const correctAns = input.getAttribute('data-ans');
-                
-                if(userAns === correctAns) {
-                    score++;
-                    input.className = 'ws-input correct';
-                } else {
-                    input.className = 'ws-input wrong';
-                }
-            });
-
-            // Lógica de desbloqueo (mínimo 16/20 = 80%)
-            if(score >= 16) {
-                showModal(true, score, total, "¡Excelente trabajo, " + studentName + "!", "Has desbloqueado el Nivel Difícil. ¡Prepárate para escribir!");
-                isTab2Locked = false;
-                const btn2 = document.getElementById('btn-tab2');
-                btn2.classList.remove('locked');
-                btn2.innerHTML = '<i class="fas fa-pen-fancy"></i> Written Practice';
-                document.getElementById('modal-btn').onclick = function() {
-                    closeModal();
-                    switchTab(2);
-                };
-            } else {
-                showModal(false, score, total, "Sigue practicando, " + studentName, "Necesitas al menos 16 aciertos para desbloquear el siguiente nivel.");
-            }
-        }
-
-        // --- 4. LÓGICA DE WRITTEN PRACTICE ---
-        function renderWrittenQuestions() {
-            const container = document.getElementById('written-questions-container');
+        // --- RENDERIZADO DINÁMICO ---
+        function renderQuestions(containerId, dataArray, prefix) {
+            const container = document.getElementById(containerId);
             let html = '';
-            writtenQuestions.forEach((item, index) => {
+            
+            dataArray.forEach((item, index) => {
+                // Guardamos el array de respuestas válidas como JSON en un atributo
+                const ansData = JSON.stringify(item.a).replace(/"/g, '&quot;');
+                
                 html += `
-                <div class="question-card">
+                <div class="q-card">
                     <div class="q-text">${index + 1}. ${item.q}</div>
-                    <input type="text" class="wr-input" data-ans="${item.a}" placeholder="Escribe tu respuesta...">
+                    <div class="input-box">
+                        <input type="text" id="${prefix}-${index}" class="q-input ${prefix}-input" 
+                               data-ans="${ansData}" placeholder="Escribe aquí..." autocomplete="off" spellcheck="false">
+                        <i class="feedback-icon"></i>
+                    </div>
                 </div>`;
             });
             container.innerHTML = html;
         }
 
+        // --- NAVEGACIÓN ---
+        function switchTab(tabIndex) {
+            if(tabIndex === 2 && !tab2Unlocked) {
+                showToast(`🔒 ¡Alto ahí, ${studentName}! Debes sacar 20/20 en el Worksheet primero.`, "warning");
+                return;
+            }
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.module-view').forEach(m => m.classList.remove('active'));
+            
+            document.getElementById(`tab-btn-${tabIndex}`).classList.add('active');
+            document.getElementById(`module-${tabIndex}`).classList.add('active');
+
+            if(tabIndex === 2 && !timerRunning) {
+                startTimer();
+                showToast(`¡Corre tiempo, ${studentName}! 40 minutos.`, "warning");
+            }
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- VERIFICACIÓN WORKSHEET (100% PARA PASAR) ---
+        function verifyWorksheet() {
+            const inputs = document.querySelectorAll('.ws-input');
+            let correctCount = 0;
+            let hasErrors = false;
+
+            inputs.forEach(input => {
+                // Si ya estaba correcta y bloqueada, la contamos y saltamos
+                if(input.classList.contains('correct')) {
+                    correctCount++;
+                    return; 
+                }
+
+                // Limpieza de la respuesta del usuario (trim, minúsculas, arreglar apóstrofes)
+                let userVal = input.value.trim().toLowerCase().replace(/‘|’/g, "'");
+                const validAnswers = JSON.parse(input.getAttribute('data-ans'));
+
+                if(validAnswers.includes(userVal)) {
+                    // ¡Correcto! Se pinta verde y se bloquea
+                    input.classList.remove('wrong');
+                    input.classList.add('correct');
+                    input.readOnly = true; 
+                    correctCount++;
+                } else {
+                    // ¡Incorrecto! Se pinta rojo, vibra, pero SE DEJA el texto para que lo editen
+                    input.classList.remove('correct');
+                    input.classList.add('wrong');
+                    input.classList.add('shake');
+                    setTimeout(() => input.classList.remove('shake'), 500);
+                    hasErrors = true;
+                }
+            });
+
+            // Lógica de validación total
+            if(correctCount === 20) {
+                tab2Unlocked = true;
+                document.getElementById('tab-btn-2').classList.remove('locked');
+                document.getElementById('lock-icon').className = "fas fa-unlock";
+                
+                openModal(
+                    "¡Perfección Absoluta! 🏆", 
+                    `¡Increíble, ${studentName}! Lograste 20/20 en el Worksheet. Has desbloqueado el Reto Escrito. Respira profundo y prepárate.`,
+                    () => { closeModal(); switchTab(2); }
+                );
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            } else {
+                showToast(`Te faltan ${20 - correctCount}. Corrige las que están en rojo. ¡Tú puedes, ${studentName}!`, "error");
+            }
+        }
+
+        // --- VERIFICACIÓN WRITTEN PRACTICE (FINAL) ---
+        function verifyWritten() {
+            clearInterval(timerInterval); // Detener reloj
+            const inputs = document.querySelectorAll('.wp-input');
+            let finalScore = 0;
+
+            inputs.forEach(input => {
+                let userVal = input.value.trim().toLowerCase().replace(/‘|’/g, "'");
+                const validAnswers = JSON.parse(input.getAttribute('data-ans'));
+
+                if(validAnswers.includes(userVal)) {
+                    input.classList.remove('wrong');
+                    input.classList.add('correct');
+                    input.readOnly = true;
+                    finalScore++;
+                } else {
+                    input.classList.add('wrong');
+                    input.readOnly = true; // Al final ya bloqueamos todo
+                    // Opcional: Mostrar la respuesta correcta
+                    input.value = `${input.value} ❌ (Ans: ${validAnswers[0]})`;
+                }
+            });
+
+            // Evaluamos el desempeño
+            let msg = "";
+            let icon = "";
+            let pct = Math.round((finalScore / 30) * 100);
+
+            if(finalScore === 30) {
+                icon = "🌟";
+                msg = `¡PUNTAJE PERFECTO! ${studentName}, dominas este tema al 100%. Nivel leyenda alcanzado.`;
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            } else if (finalScore >= 24) {
+                icon = "👏";
+                msg = `¡Muy buen trabajo, ${studentName}! Sacaste ${finalScore}/30 (${pct}%). Estás casi listo.`;
+            } else {
+                icon = "💪";
+                msg = `Obtuviste ${finalScore}/30. Hay áreas de oportunidad, ${studentName}. Hay que seguir repasando el verbo To Be.`;
+            }
+
+            openModal(`Examen Finalizado`, msg, () => { location.reload(); }, icon);
+            document.getElementById('mod-btn').innerText = "Volver a empezar";
+        }
+
+        // --- TIMER ---
         function startTimer() {
-            if(timerInterval) return; // Ya está corriendo
+            timerRunning = true;
+            document.getElementById('timer-widget').style.display = 'flex';
             
             timerInterval = setInterval(() => {
                 timeLeft--;
                 const m = Math.floor(timeLeft / 60);
                 const s = timeLeft % 60;
-                document.getElementById('time-display').innerText = 
-                    `${m}:${s < 10 ? '0' : ''}${s}`;
+                document.getElementById('time-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+
+                if(timeLeft <= 300) { // 5 minutos
+                    document.getElementById('timer-widget').style.animation = "shakeError 1s infinite";
+                }
 
                 if(timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("⏰ ¡Tiempo terminado, " + studentName + "! Se enviarán tus respuestas.");
-                    checkWritten();
+                    openModal("¡Tiempo agotado! ⏰", `El reloj llegó a cero, ${studentName}. Vamos a calificar lo que alcanzaste a hacer.`, () => {
+                        closeModal();
+                        verifyWritten();
+                    });
                 }
             }, 1000);
         }
 
-        function checkWritten() {
-            clearInterval(timerInterval); // Detener reloj
-            const inputs = document.querySelectorAll('.wr-input');
-            let score = 0;
-            let total = inputs.length;
-
-            inputs.forEach(input => {
-                // Normalizar: Minúsculas y quitar espacios extra
-                let val = input.value.toLowerCase().trim();
-                let ans = input.getAttribute('data-ans').toLowerCase();
-                
-                // Aceptamos contracciones si la respuesta es "is not" -> "isn't" (simplificado para este demo)
-                if(val === ans || (ans === "is not" && val === "isn't") || (ans === "are not" && val === "aren't") || (ans === "am not" && val === "i'm not")) {
-                    score++;
-                    input.className = 'wr-input correct';
-                } else {
-                    input.className = 'wr-input wrong';
-                    // Mostrar respuesta correcta en placeholder si falló
-                    input.value += ` ❌ (Correct: ${ans})`;
-                }
-            });
-
-            // Mensaje final
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            showModal(true, score, total, "¡Curso Completado!", "¡Felicidades " + studentName + "! Has terminado todo el entrenamiento.");
-            document.getElementById('modal-btn').onclick = function() { location.reload(); };
+        // --- UI UTILS (TOASTS & MODALS) ---
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            
+            let icon = type === 'success' ? '<i class="fas fa-check-circle" style="color:var(--success)"></i>' :
+                       type === 'error' ? '<i class="fas fa-exclamation-circle" style="color:var(--error)"></i>' :
+                       '<i class="fas fa-info-circle" style="color:var(--warning)"></i>';
+            
+            toast.style.borderLeftColor = `var(--${type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'oe-cyan'})`;
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Auto eliminar después de 3.3s
+            setTimeout(() => { toast.remove(); }, 3300);
         }
 
-        // --- 5. UTILIDADES MODAL ---
-        function showModal(isSuccess, score, total, title, msg) {
-            const modal = document.getElementById('result-modal');
-            const scoreTxt = document.getElementById('modal-score');
+        function openModal(title, body, actionFn, iconStr = "🏆") {
+            document.getElementById('mod-title').innerText = title;
+            document.getElementById('mod-body').innerText = body;
+            document.getElementById('mod-icon').innerText = iconStr;
             
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-msg').innerText = msg;
-            scoreTxt.innerText = `${score}/${total}`;
-            scoreTxt.style.borderColor = isSuccess ? '#10B981' : '#EF4444';
-            
-            modal.style.display = 'flex';
+            const btn = document.getElementById('mod-btn');
+            // Removemos listeners viejos clonando
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', actionFn);
+
+            document.getElementById('global-modal').style.display = 'flex';
         }
 
         function closeModal() {
-            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('global-modal').style.display = 'none';
         }
 
     </script>
