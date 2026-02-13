@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Smart Practice | One English</title>
+    <title>Workbook Pro | One English</title>
     
     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w128">
     <link rel="apple-touch-icon" href="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w512">
     <meta name="theme-color" content="#2C4A84">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:ital,wght@1,500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -25,17 +25,14 @@
         body { font-family: 'Poppins', sans-serif; background: var(--bg-body); color: var(--text-main); padding-bottom: 80px; }
 
         /* === PANTALLA BIENVENIDA === */
-        #welcome-screen {
-            position: fixed; inset: 0; background: var(--bg-card); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
-        }
+        #welcome-screen { position: fixed; inset: 0; background: var(--bg-card); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         .logo-box { width: 100px; height: 100px; border-radius: 20px; box-shadow: 0 10px 20px rgba(44,74,132,0.15); overflow: hidden; margin-bottom: 20px; }
         .logo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .input-name { width: 100%; max-width: 300px; padding: 15px; border-radius: 12px; border: 2px solid #E2E8F0; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--oe-navy); margin-bottom: 20px; outline: none; }
+        .input-name { width: 100%; max-width: 300px; padding: 15px; border-radius: 12px; border: 2px solid #E2E8F0; text-align: center; font-size: 1.1rem; font-weight: 700; color: var(--oe-navy); margin-bottom: 20px; outline: none; transition: 0.3s; }
         .input-name:focus { border-color: var(--oe-cyan); }
         .btn-start { background: var(--oe-navy); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: 800; font-size: 1.1rem; cursor: pointer; box-shadow: 0 10px 20px rgba(44,74,132,0.2); }
 
-        /* === HEADER & TABS === */
+        /* === APP UI === */
         #app-root { display: none; max-width: 800px; margin: 0 auto; }
         .header { background: var(--bg-card); padding: 15px 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .student-badge { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--oe-navy); }
@@ -46,32 +43,43 @@
         .tab-btn.active { background: var(--oe-navy); color: white; }
         .tab-btn.locked { opacity: 0.5; background: #CBD5E1; cursor: not-allowed; }
 
-        /* === PREGUNTAS INLINE === */
         .module { display: none; padding: 0 20px; animation: slideUp 0.4s ease; }
         .module.active { display: block; }
         @keyframes slideUp { from {opacity:0; transform:translateY(15px);} to {opacity:1; transform:translateY(0);} }
 
-        .info-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; border-left: 5px solid; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        /* === SECCIONES Y PREGUNTAS === */
+        .section-header { font-family: 'Lora', serif; color: var(--oe-navy); font-size: 1.3rem; margin: 25px 0 15px 0; border-bottom: 2px solid #E2E8F0; padding-bottom: 5px; }
         
-        .q-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 12px; font-size: 1.1rem; color: var(--text-main); font-weight: 500; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border: 1px solid #E2E8F0; }
+        .q-card { background: white; padding: 18px; border-radius: 12px; margin-bottom: 12px; font-size: 1.05rem; color: var(--text-main); font-weight: 500; border: 1px solid #E2E8F0; transition: 0.3s; }
+        .q-card:focus-within { border-color: var(--oe-cyan); box-shadow: 0 4px 12px rgba(42,166,196,0.1); }
+        
+        /* Tipo 1: Inline (Para WS) */
+        .inline-box { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
         .q-num { font-weight: 800; color: var(--oe-cyan); width: 25px; }
-        
-        /* El input dentro de la oración */
         .inline-input {
-            width: 100px; padding: 5px 10px; border: 2px solid #CBD5E1; border-radius: 8px;
+            width: 110px; padding: 6px 10px; border: 2px solid #CBD5E1; border-radius: 8px;
             font-family: 'Poppins'; font-size: 1rem; font-weight: 700; color: var(--oe-navy);
             text-align: center; background: #F8FAFC; outline: none; transition: 0.3s;
         }
-        .inline-input:focus { border-color: var(--oe-cyan); background: white; width: 120px; }
-        .inline-input.correct { border-color: var(--success); background: #ECFDF5; color: var(--success); pointer-events: none; }
-        .inline-input.wrong { border-color: var(--error); background: #FEF2F2; color: var(--error); animation: shake 0.4s; }
+        .inline-input:focus { border-color: var(--oe-cyan); background: white; width: 130px; }
+        
+        /* Tipo 2: Full Width (Para WP) */
+        .full-prompt { font-weight: 600; margin-bottom: 10px; color: var(--text-main); }
+        .full-input {
+            width: 100%; padding: 12px 15px; border: 2px solid #CBD5E1; border-radius: 8px;
+            font-family: 'Poppins'; font-size: 1rem; font-weight: 600; color: var(--oe-navy);
+            background: #F8FAFC; outline: none; transition: 0.3s;
+        }
+        .full-input:focus { border-color: var(--oe-cyan); background: white; }
 
+        /* Estados de Validación */
+        .correct { border-color: var(--success) !important; background: #ECFDF5 !important; color: #065F46 !important; pointer-events: none; }
+        .wrong { border-color: var(--error) !important; background: #FEF2F2 !important; color: #991B1B !important; animation: shake 0.4s; }
         @keyframes shake { 10%, 90% {transform: translateX(-2px);} 20%, 80% {transform: translateX(3px);} 30%, 50%, 70% {transform: translateX(-4px);} 40%, 60% {transform: translateX(4px);} }
 
-        .btn-submit { width: 100%; padding: 18px; border-radius: 12px; background: var(--oe-navy); color: white; border: none; font-weight: 800; font-size: 1.1rem; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(44,74,132,0.2); }
-
-        /* === STATUS & TOASTS === */
-        .lives-badge { background: #FEF2F2; color: var(--error); padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 15px; border: 1px solid #FCA5A5; }
+        /* === BOTONES Y UI === */
+        .btn-submit { width: 100%; padding: 18px; border-radius: 12px; background: var(--oe-navy); color: white; border: none; font-weight: 800; font-size: 1.1rem; margin: 20px 0 40px; cursor: pointer; box-shadow: 0 5px 15px rgba(44,74,132,0.2); }
+        .lives-badge { background: #FEF2F2; color: var(--error); padding: 8px 15px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 5px; margin-bottom: 10px; border: 1px solid #FCA5A5; }
         
         #toast-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: white; padding: 15px 20px; border-radius: 30px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border-left: 4px solid var(--oe-cyan); display: flex; align-items: center; gap: 10px; animation: dropIn 0.3s, fadeOut 0.3s 3.5s forwards; }
@@ -79,7 +87,7 @@
         @keyframes fadeOut { to{opacity:0;} }
 
         /* MODAL */
-        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
         .modal-card { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 20px; text-align: center; animation: pop 0.3s; }
         @keyframes pop { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
     </style>
@@ -88,20 +96,20 @@
 
     <div id="welcome-screen">
         <div class="logo-box"><img src="https://drive.google.com/thumbnail?id=1CId639VyMXaFjtG6dZMkjP_xewS1z8lH&sz=w200"></div>
-        <h1 style="color:var(--oe-navy); font-family:'Lora'; margin-bottom:5px;">Intensive Lab</h1>
+        <h1 style="color:var(--oe-navy); font-family:'Lora';">Workbook Pro</h1>
         <p style="color:var(--text-muted); font-weight:500; margin-bottom:30px;">Verb To Be & There is/are</p>
         <input type="text" id="student-name" class="input-name" placeholder="Escribe tu nombre..." autocomplete="off">
-        <button class="btn-start" onclick="login()">COMENZAR</button>
+        <button class="btn-start" onclick="login()">ENTER WORKBOOK</button>
     </div>
 
     <div id="toast-box"></div>
 
     <div id="app-root">
         <header class="header">
-            <div style="font-weight:800; color:var(--oe-cyan);"><i class="fas fa-bolt"></i> One English</div>
+            <div style="font-weight:800; color:var(--oe-cyan);"><i class="fas fa-book-open"></i> One English</div>
             <div class="student-badge">
                 <span id="ui-name">Name</span>
-                <button class="btn-logout" onclick="resetAllData()" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></button>
+                <button class="btn-logout" onclick="resetAllData()"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
 
@@ -111,22 +119,22 @@
         </div>
 
         <div id="mod-ws" class="module active">
-            <div class="info-card" style="border-color:var(--oe-cyan);">
-                <h3 style="color:var(--oe-navy);">Fase 1: Worksheet</h3>
-                <p style="font-size:0.9rem; color:var(--text-muted);">Completa las 20 oraciones para desbloquear la prueba final. Tu progreso se guardará automáticamente.</p>
+            <div style="background:white; padding:15px; border-radius:12px; margin-bottom:10px; border-left:5px solid var(--oe-cyan); box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                <h3 style="color:var(--oe-navy);">Worksheet (20 points)</h3>
+                <p style="font-size:0.9rem; color:var(--text-muted);">Completa todas las secciones al 100% para desbloquear la Fase 2. Tus correctas se guardarán en verde.</p>
             </div>
             <div id="ws-content"></div>
-            <button class="btn-submit" onclick="checkWorksheet()"><i class="fas fa-check"></i> CALIFICAR WORKSHEET</button>
+            <button class="btn-submit" onclick="checkWorksheet()"><i class="fas fa-check-double"></i> CHECK WORKSHEET</button>
         </div>
 
         <div id="mod-wp" class="module">
-            <div class="info-card" style="border-color:var(--warning); background:#FFFBEB;">
-                <h3 style="color:#92400E;">Fase 2: Reto Final</h3>
-                <p style="font-size:0.9rem; color:#B45309;">Nivel estricto. Escribe la respuesta correcta.</p>
+            <div style="background:#FFFBEB; padding:15px; border-radius:12px; margin-bottom:10px; border-left:5px solid var(--warning); box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                <h3 style="color:#92400E;">Written Practice (20 points)</h3>
+                <p style="font-size:0.9rem; color:#B45309;">Escribe la oración completa. La puntuación final (puntos y comas) no afecta tu calificación.</p>
             </div>
             <div class="lives-badge" id="lives-counter"><i class="fas fa-heart"></i> Tienes 3 intentos</div>
             <div id="wp-content"></div>
-            <button class="btn-submit" style="background:var(--warning); color:#92400E;" onclick="checkWritten()"><i class="fas fa-flag-checkered"></i> ENTREGAR EXAMEN</button>
+            <button class="btn-submit" style="background:var(--warning); color:#92400E;" onclick="checkWritten()"><i class="fas fa-flag-checkered"></i> SUBMIT EXAM</button>
         </div>
     </div>
 
@@ -141,57 +149,101 @@
 
     <script>
         /* ==================================================
-           BASE DE DATOS (20 c/u, con "split" para Inputs Inline)
+           BASE DE DATOS ESTRUCTURADA POR SECCIONES
            ================================================== */
-        // Formato: pre = Texto antes, post = Texto después
+        
+        // WORKSHEET (Inline Inputs)
         const db_ws = [
-            { pre: "She", post: "my best friend.", ans: ["is", "'s"] },
-            { pre: "I", post: "25 years old.", ans: ["am", "'m"] },
-            { pre: "They", post: "at the cinema.", ans: ["are", "'re"] },
-            { pre: "", post: "you happy today?", ans: ["are"] },
-            { pre: "It", post: "a beautiful dog.", ans: ["is", "'s"] },
-            { pre: "We", post: "not hungry.", ans: ["are", "'re"] },
-            { pre: "The cat", post: "under the table.", ans: ["is"] },
-            { pre: "My parents", post: "teachers.", ans: ["are"] },
-            { pre: "", post: "he your brother?", ans: ["is"] },
-            { pre: "I", post: "(not) sad.", ans: ["am not", "'m not"] },
-            { pre: "", post: "a book on the desk.", ans: ["there is", "there's"] },
-            { pre: "", post: "many people here.", ans: ["there are", "there're"] },
-            { pre: "", post: "any milk in the fridge?", ans: ["is there"] },
-            { pre: "", post: "two cars in the garage.", ans: ["there are", "there're"] },
-            { pre: "", post: "a spider in my room!", ans: ["there is", "there's"] },
-            { pre: "", post: "5 students in the class.", ans: ["there are", "there're"] },
-            { pre: "No,", post: "not any money.", ans: ["there is", "there's"] },
-            { pre: "", post: "a problem with my phone.", ans: ["there is", "there's"] },
-            { pre: "How many chairs", post: "?", ans: ["are there"] },
-            { pre: "", post: "only one option.", ans: ["there is", "there's"] }
+            {
+                section: "Part A: Complete using am, is, or are.",
+                items: [
+                    { type: "inline", pre: "I", post: "very tired today.", ans: ["am", "'m"] },
+                    { type: "inline", pre: "My keys", post: "on the table.", ans: ["are"] },
+                    { type: "inline", pre: "The weather", post: "nice.", ans: ["is", "'s"] },
+                    { type: "inline", pre: "We", post: "late for class.", ans: ["are", "'re"] },
+                    { type: "inline", pre: "It", post: "a good movie.", ans: ["is", "'s"] }
+                ]
+            },
+            {
+                section: "Part B: Complete using There is, There are, Is there, or Are there.",
+                items: [
+                    { type: "inline", pre: "", post: "a fly in my soup!", ans: ["there is", "there's"] },
+                    { type: "inline", pre: "", post: "many parks in Tepic.", ans: ["there are", "there're"] },
+                    { type: "inline", pre: "", post: "an ATM near here?", ans: ["is there"] },
+                    { type: "inline", pre: "", post: "any questions?", ans: ["are there"] },
+                    { type: "inline", pre: "", post: "five people in my family.", ans: ["there are"] }
+                ]
+            },
+            {
+                section: "Part C: Form the negative. (Only type the negative verb)",
+                items: [
+                    { type: "inline", pre: "(I am Mexican) &rarr; I", post: "Spanish.", ans: ["am not", "'m not"] },
+                    { type: "inline", pre: "(She is here) &rarr; She", post: "at home.", ans: ["is not", "isn't", "'s not"] },
+                    { type: "inline", pre: "(They are dogs) &rarr; They", post: "cats.", ans: ["are not", "aren't", "'re not"] },
+                    { type: "inline", pre: "(There is a car) &rarr; There", post: "a bike.", ans: ["is not", "isn't", "'s not"] },
+                    { type: "inline", pre: "(We are ready) &rarr; We", post: "ready.", ans: ["are not", "aren't", "'re not"] }
+                ]
+            },
+            {
+                section: "Part D: Form the question from the prompts.",
+                items: [
+                    { type: "inline", pre: "(you / from Mexico) &rarr;", post: "you from Mexico?", ans: ["are"] },
+                    { type: "inline", pre: "(he / a teacher) &rarr;", post: "he a teacher?", ans: ["is"] },
+                    { type: "inline", pre: "(it / cold) &rarr;", post: "it cold today?", ans: ["is"] },
+                    { type: "inline", pre: "(there / a problem) &rarr;", post: "a problem?", ans: ["is there"] },
+                    { type: "inline", pre: "(they / open) &rarr;", post: "they open?", ans: ["are"] }
+                ]
+            }
         ];
 
+        // WRITTEN PRACTICE (Full Inputs)
+        // Nota: Las respuestas válidas aquí se escriben SIN signos de puntuación (. ? !)
+        // El script se encarga de quitárselos a lo que escriba el alumno para compararlo.
         const db_wp = [
-            { pre: "I", post: "(not) a doctor.", ans: ["am not", "'m not"] },
-            { pre: "", post: "(She) your sister?", ans: ["is she"] },
-            { pre: "They", post: "(not) at home.", ans: ["are not", "aren't", "'re not"] },
-            { pre: "", post: "(There is) a book here.", ans: ["there is", "there's"] },
-            { pre: "", post: "(There are) two dogs.", ans: ["there are"] },
-            { pre: "We", post: "happy today.", ans: ["are", "'re"] },
-            { pre: "It", post: "cold outside.", ans: ["is", "'s"] },
-            { pre: "", post: "(not) you tired?", ans: ["are not", "aren't"] },
-            { pre: "John", post: "my brother.", ans: ["is", "'s"] },
-            { pre: "I", post: "20 years old.", ans: ["am", "'m"] },
-            { pre: "", post: "(There) any water?", ans: ["is there"] },
-            { pre: "There", post: "(not) any chairs.", ans: ["are not", "aren't"] },
-            { pre: "Where", post: "(be) you from?", ans: ["are"] },
-            { pre: "What", post: "(be) your name?", ans: ["is", "'s"] },
-            { pre: "Who", post: "(be) that man?", ans: ["is", "'s"] },
-            { pre: "", post: "(be) they students?", ans: ["are"] },
-            { pre: "The car", post: "(be) red.", ans: ["is"] },
-            { pre: "My eyes", post: "(be) blue.", ans: ["are"] },
-            { pre: "There", post: "(be) a problem.", ans: ["is", "'s"] },
-            { pre: "I", post: "(be) not hungry.", ans: ["am", "'m"] }
+            {
+                section: "Part A: Unscramble the sentences.",
+                items: [
+                    { type: "full", prompt: "(not / I / a / doctor / am)", ans: ["i am not a doctor", "i'm not a doctor"] },
+                    { type: "full", prompt: "(is / an / apple / there / ?)", ans: ["is there an apple"] },
+                    { type: "full", prompt: "(my / are / they / friends)", ans: ["they are my friends", "they're my friends"] },
+                    { type: "full", prompt: "(brother / tall / is / your / ?)", ans: ["is your brother tall"] },
+                    { type: "full", prompt: "(cars / are / two / there)", ans: ["there are two cars"] }
+                ]
+            },
+            {
+                section: "Part B: Correct the mistake.",
+                items: [
+                    { type: "full", prompt: "I has 20 years old.", ans: ["i am 20 years old", "i'm 20 years old"] },
+                    { type: "full", prompt: "Is there many students?", ans: ["are there many students"] },
+                    { type: "full", prompt: "She not is my sister.", ans: ["she is not my sister", "she isn't my sister", "she's not my sister"] },
+                    { type: "full", prompt: "There is five apples.", ans: ["there are five apples"] },
+                    { type: "full", prompt: "You is very smart.", ans: ["you are very smart", "you're very smart"] }
+                ]
+            },
+            {
+                section: "Part C: Rewrite in Negative form.",
+                items: [
+                    { type: "full", prompt: "He is a good singer.", ans: ["he is not a good singer", "he isn't a good singer", "he's not a good singer"] },
+                    { type: "full", prompt: "There is a cat.", ans: ["there is not a cat", "there isn't a cat", "there's not a cat"] },
+                    { type: "full", prompt: "I am hungry.", ans: ["i am not hungry", "i'm not hungry"] },
+                    { type: "full", prompt: "We are at school.", ans: ["we are not at school", "we aren't at school", "we're not at school"] },
+                    { type: "full", prompt: "There is water in the glass.", ans: ["there is not water in the glass", "there isn't water in the glass"] }
+                ]
+            },
+            {
+                section: "Part D: Answer the questions with Short Answers.",
+                items: [
+                    { type: "full", prompt: "Are you a student? (Yes)", ans: ["yes i am"] },
+                    { type: "full", prompt: "Is she from Canada? (No)", ans: ["no she is not", "no she isn't", "no she's not"] },
+                    { type: "full", prompt: "Are there any apples? (Yes)", ans: ["yes there are"] },
+                    { type: "full", prompt: "Is there a dog? (No)", ans: ["no there is not", "no there isn't", "no there's not"] },
+                    { type: "full", prompt: "Are they happy? (Yes)", ans: ["yes they are"] }
+                ]
+            }
         ];
 
         /* ==================================================
-           SISTEMA DE MEMORIA (LOCAL STORAGE) & VARIABLES
+           LÓGICA DE MEMORIA Y NAVEGACIÓN
            ================================================== */
         let student = "";
         let isWsPassed = false;
@@ -210,17 +262,14 @@
                 
                 if(isWsPassed) {
                     unlockWP();
-                    toast(`¡Qué bueno verte de nuevo, ${student}! Fase 2 desbloqueada.`);
+                    toast(`¡Hola de nuevo, ${student}! Fase 2 desbloqueada.`);
                 } else {
-                    toast(`¡Hola de nuevo, ${student}! Sigamos practicando.`);
+                    toast(`¡A seguir practicando, ${student}!`);
                 }
                 updateLivesUI();
             }
         }
 
-        /* ==================================================
-           LÓGICA DE INTERFAZ & RENDERIZADO
-           ================================================== */
         function login() {
             const val = document.getElementById('student-name').value.trim();
             if(val.length < 2) return toast("Por favor, escribe tu nombre.", "error");
@@ -232,20 +281,6 @@
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('app-root').style.display = 'block';
             toast(`¡Bienvenido al reto, ${student}!`);
-        }
-
-        function renderInline(containerId, dataArray, prefix) {
-            const box = document.getElementById(containerId);
-            let html = "";
-            dataArray.forEach((q, i) => {
-                const ansStr = JSON.stringify(q.ans).replace(/"/g, '&quot;');
-                html += `
-                <div class="q-card">
-                    <span class="q-num">${i+1}.</span>
-                    <span>${q.pre} <input type="text" id="${prefix}-${i}" class="inline-input ${prefix}-in" data-ans="${ansStr}" autocomplete="off" spellcheck="false"> ${q.post}</span>
-                </div>`;
-            });
-            box.innerHTML = html;
         }
 
         function openTab(id) {
@@ -267,74 +302,120 @@
             document.getElementById('icon-wp').className = 'fas fa-unlock';
         }
 
+        function resetAllData() {
+            if(confirm("¿Seguro que quieres borrar tu sesión y progreso?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
         /* ==================================================
-           SISTEMA DE VERIFICACIÓN (WS y WP)
+           RENDERIZADOR INTELIGENTE (SECCIONES Y TIPOS)
+           ================================================== */
+        function renderWorkbook(containerId, dbArray, prefix) {
+            const box = document.getElementById(containerId);
+            let html = "";
+            let globalIndex = 1;
+
+            dbArray.forEach((section) => {
+                html += `<h4 class="section-header">${section.section}</h4>`;
+                
+                section.items.forEach((q) => {
+                    const ansStr = JSON.stringify(q.ans).replace(/"/g, '&quot;');
+                    
+                    if(q.type === "inline") {
+                        html += `
+                        <div class="q-card">
+                            <div class="inline-box">
+                                <span class="q-num">${globalIndex}.</span>
+                                <span>${q.pre} <input type="text" class="inline-input ${prefix}-in" data-ans="${ansStr}" autocomplete="off" spellcheck="false"> ${q.post}</span>
+                            </div>
+                        </div>`;
+                    } else if (q.type === "full") {
+                        html += `
+                        <div class="q-card">
+                            <div class="full-prompt"><span class="q-num">${globalIndex}.</span> ${q.prompt}</div>
+                            <input type="text" class="full-input ${prefix}-in" data-ans="${ansStr}" placeholder="Write the sentence here..." autocomplete="off" spellcheck="false">
+                        </div>`;
+                    }
+                    globalIndex++;
+                });
+            });
+            box.innerHTML = html;
+        }
+
+        /* ==================================================
+           MOTOR DE VALIDACIÓN (ANTI-FRUSTRACIÓN)
            ================================================== */
         function processInputs(selector) {
             let correct = 0;
             const inputs = document.querySelectorAll(selector);
             
             inputs.forEach(input => {
-                if(input.classList.contains('correct')) { correct++; return; } // Ya estaba bien
+                if(input.classList.contains('correct')) { correct++; return; }
                 
-                let val = input.value.trim().toLowerCase().replace(/‘|’/g, "'");
+                // MAGIA: Minúsculas, limpia espacios, cambia comillas raras, y ELIMINA signos de puntuación (. ? ! ,)
+                let val = input.value.trim().toLowerCase()
+                               .replace(/‘|’|´/g, "'")
+                               .replace(/[.,?!]/g, "")
+                               .replace(/\s+/g, ' '); // normaliza múltiples espacios
+                
                 let ansArray = JSON.parse(input.getAttribute('data-ans'));
 
                 if(ansArray.includes(val)) {
-                    input.className = `inline-input ${selector.replace('.','')} correct`;
+                    input.classList.remove('wrong');
+                    input.classList.add('correct');
                     input.readOnly = true;
                     correct++;
                 } else {
-                    input.className = `inline-input ${selector.replace('.','')} wrong`;
+                    input.classList.add('wrong');
                 }
             });
             return { correct, total: inputs.length };
         }
 
-        // WORKSHEET (Sin límite de intentos)
+        // --- CALIFICAR WORKSHEET ---
         function checkWorksheet() {
             const res = processInputs('.ws-in');
             
             if(res.correct === res.total) {
                 unlockWP();
                 confetti();
-                modal("¡Fase 1 Completada! 🏆", `¡Perfecto ${student}! Tienes 20/20. Tu progreso está guardado. Pasa al Reto Escrito.`, () => {
+                modal("Worksheet Perfecta 🏆", `¡Increíble ${student}! Tienes 20/20. Ya puedes ir a la pestaña "Written Practice".`, () => {
                     closeModal(); openTab('wp');
                 });
             } else {
-                toast(`Te faltan ${res.total - res.correct}. Corrige las casillas rojas.`, "error");
+                toast(`Tienes ${res.correct}/${res.total}. Las cajas rojas están mal, corrígelas.`, "error");
             }
         }
 
-        // WRITTEN PRACTICE (3 Intentos)
+        // --- CALIFICAR WRITTEN PRACTICE ---
         function checkWritten() {
             const res = processInputs('.wp-in');
 
             if(res.correct === res.total) {
-                // GANADOR
-                localStorage.setItem('oe_wp_attempts', '0'); // Reset memory
-                confetti({particleCount: 150});
-                modal("¡CERTIFICADO! 🌟", `¡Impresionante, ${student}! Lograste el 20/20 en el nivel más difícil. Eres un máster del Verb To Be.`, () => location.reload());
-                document.getElementById('mod-btn').innerText = "Finalizar";
+                localStorage.setItem('oe_wp_attempts', '0');
+                confetti({particleCount: 200, spread: 90});
+                modal("¡CERTIFICADO MASTER! 🌟", `¡Puntaje perfecto en nivel avanzado, ${student}! Estás listísimo para el siguiente tema.`, () => location.reload());
+                document.getElementById('mod-btn').innerText = "Volver a empezar";
                 return;
             }
 
-            // FALLÓ
             wpAttempts++;
             localStorage.setItem('oe_wp_attempts', wpAttempts.toString());
             updateLivesUI();
 
             if(wpAttempts >= MAX_ATTEMPTS) {
-                // GAME OVER - Reiniciar WP
-                modal("Límite Alcanzado 💔", `Se acabaron tus 3 intentos, ${student}. El Reto Escrito se reiniciará para que lo intentes de nuevo (Tu Worksheet está a salvo).`, () => {
+                modal("Límite Alcanzado 💔", `Se acabaron los intentos de este examen, ${student}. Tus respuestas se borrarán para que empieces desde cero (Tu Worksheet está a salvo).`, () => {
                     wpAttempts = 0;
                     localStorage.setItem('oe_wp_attempts', '0');
-                    renderInline('wp-content', db_wp, 'wp'); // Borra todo y redibuja
+                    renderWorkbook('wp-content', db_wp, 'wp'); // Reset
                     updateLivesUI();
                     closeModal();
+                    window.scrollTo(0,0);
                 }, "🔄");
             } else {
-                toast(`Error. Te quedan ${MAX_ATTEMPTS - wpAttempts} intentos. Corrige las rojas.`, "warning");
+                toast(`Te equivocaste en algunas. Te quedan ${MAX_ATTEMPTS - wpAttempts} intento(s).`, "warning");
             }
         }
 
@@ -347,23 +428,16 @@
         }
 
         /* ==================================================
-           UTILIDADES (BORRAR DATOS, TOASTS Y MODALS)
+           UI HELPERS
            ================================================== */
-        function resetAllData() {
-            if(confirm("¿Seguro que quieres borrar tu usuario y empezar desde cero?")) {
-                localStorage.clear();
-                location.reload();
-            }
-        }
-
         function toast(msg, type="success") {
             const box = document.getElementById('toast-box');
             const t = document.createElement('div');
             t.className = 'toast';
             t.style.borderLeftColor = type === 'error' ? 'var(--error)' : type === 'warning' ? 'var(--warning)' : 'var(--oe-cyan)';
-            t.innerHTML = `<i class="fas fa-${type==='success'?'check':type==='error'?'times':'exclamation'}-circle" style="color:${t.style.borderLeftColor}"></i> ${msg}`;
+            t.innerHTML = `<i class="fas fa-${type==='success'?'check':type==='error'?'times':'exclamation'}-circle" style="color:${t.style.borderLeftColor}"></i> <span>${msg}</span>`;
             box.appendChild(t);
-            setTimeout(() => t.remove(), 3800);
+            setTimeout(() => t.remove(), 3500);
         }
 
         function modal(title, body, fn, icon="🏆") {
@@ -376,10 +450,10 @@
         }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
 
-        // Inicializar
+        // --- ARRANQUE ---
         window.onload = () => {
-            renderInline('ws-content', db_ws, 'ws');
-            renderInline('wp-content', db_wp, 'wp');
+            renderWorkbook('ws-content', db_ws, 'ws');
+            renderWorkbook('wp-content', db_wp, 'wp');
             checkMemory();
         };
 
